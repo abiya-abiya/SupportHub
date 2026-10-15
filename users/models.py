@@ -8,8 +8,8 @@ class User(AbstractUser):
         ('admin', 'Admin'),
         ('operator', 'Operator'),
     )
-    username = models.CharField(max_length=50)
-    email = models.EmailField()
+    username = models.CharField(max_length=50, unique=True)
+    email = models.EmailField(unique=True)
     role = models.CharField(max_length=50, choices=ROLE_CHOICES, default='client')
     phone = models.CharField(max_length=50)
     is_active = models.BooleanField(default=True)
