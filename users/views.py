@@ -5,7 +5,7 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
+from rest_framework import generics
 from users.jwt import create_access_token, create_refresh_token, decode_token
 from users.serializers import RegisterUserSerializer, LoginSerializer, ProfileSerializer
 
@@ -67,7 +67,7 @@ class RefreshTokenAPIView(APIView):
         new_access = create_access_token(payload['user_id'])
         return Response({'access_token': new_access}, status=200)
 
-class ProfileAPIView(APIView):
+class ProfileAPIView(generics.RetrieveUpdateAPIView):
     serializer_class = ProfileSerializer
     permission_classes = [IsAuthenticated]
     def get_object(self):
