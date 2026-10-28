@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from users.models import User
+from users.models import User, Category
 
 
 class RegisterUserSerializer(serializers.ModelSerializer):
@@ -33,4 +33,14 @@ class ProfileSerializer(serializers.ModelSerializer):
         read_only_fields = ['user_id']
 
 
+#category boshlanadi
 
+
+class CategoryListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = [
+            'name',
+            'description',
+        ]
+        read_only_fields = ['id']

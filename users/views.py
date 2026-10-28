@@ -7,7 +7,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import generics
 from users.jwt import create_access_token, create_refresh_token, decode_token
-from users.serializers import RegisterUserSerializer, LoginSerializer, ProfileSerializer
+from users.models import Category
+from users.serializers import RegisterUserSerializer, LoginSerializer, ProfileSerializer, CategoryListSerializer
 
 
 # Create your views here.
@@ -72,3 +73,12 @@ class ProfileAPIView(generics.RetrieveUpdateAPIView):
     permission_classes = [IsAuthenticated]
     def get_object(self):
         return self.request.user
+
+
+
+#Category boshlanadi
+
+class CategoryListAPIView(generics.ListAPIView):
+    queryset = Category.objects.all()
+    serializer_class = CategoryListSerializer
+    permission_classes = [IsAuthenticated]
