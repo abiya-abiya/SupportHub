@@ -84,3 +84,8 @@ class CategoryListCreateAPIView(generics.ListCreateAPIView):
         if self.request.method == "GET":
             return [IsAuthenticated()]
         return [IsAdminUser()]
+
+class CategoryDetailUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Category.objects.all()
+    serializer_class = CategoryListSerializer
+    permission_classes = [IsAuthenticated]

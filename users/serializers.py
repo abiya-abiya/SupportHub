@@ -47,3 +47,12 @@ class CategoryListSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         return Category.objects.create(**validated_data)
+
+
+class CategoryDetailUpdateDestroySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = [
+            'name',
+            'description',
+        ]
