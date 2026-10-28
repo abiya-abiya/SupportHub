@@ -9,8 +9,6 @@ from rest_framework import generics
 from users.jwt import create_access_token, create_refresh_token, decode_token
 from users.models import Category
 from users.serializers import RegisterUserSerializer, LoginSerializer, ProfileSerializer, CategoryListSerializer
-
-
 # Create your views here.
 #ViewSet bilan register qilish
 
@@ -78,7 +76,7 @@ class ProfileAPIView(generics.RetrieveUpdateAPIView):
 
 #Category boshlanadi
 
-class CategoryListAPIView(generics.ListAPIView):
+class CategoryListCreateAPIView(generics.ListCreateAPIView):
     queryset = Category.objects.all()
     serializer_class = CategoryListSerializer
     permission_classes = [IsAuthenticated]

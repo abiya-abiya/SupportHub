@@ -44,3 +44,6 @@ class CategoryListSerializer(serializers.ModelSerializer):
             'description',
         ]
         read_only_fields = ['id']
+
+    def create(self, validated_data):
+        return Category.objects.create(**validated_data)
