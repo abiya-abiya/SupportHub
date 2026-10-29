@@ -8,6 +8,7 @@ from rest_framework.views import APIView
 from rest_framework import generics
 from users.jwt import create_access_token, create_refresh_token, decode_token
 from users.models import Category
+from users.permissions import IsOwnerOrAdmin, IsAdminOrAuthenticatedReadOnly
 from users.serializers import RegisterUserSerializer, LoginSerializer, ProfileSerializer, CategoryListSerializer
 # Create your views here.
 #ViewSet bilan register qilish
@@ -80,12 +81,13 @@ class CategoryListCreateAPIView(generics.ListCreateAPIView):
     queryset = Category.objects.all()
     serializer_class = CategoryListSerializer
 
-    def get_permissions(self):
-        if self.request.method == "GET":
-            return [IsAuthenticated()]
-        return [IsAdminUser()]
+    permission_classes = [IsAdminOrAuthenticatedReadOnly]
+    # def get_permissions(self):
+    #     if self.request.method == "GET":
+    #         return [IsAuthenticated()]
+    #     return [IsAdminUser()]
 
 class CategoryDetailUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Category.objects.all()
     serializer_class = CategoryListSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsOwnerOrAdmin]
