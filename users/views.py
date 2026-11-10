@@ -6,66 +6,83 @@ from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import generics
-from users.jwt import create_access_token, create_refresh_token, decode_token
-from users.models import Category
+
+from users import serializers
+# from users.jwt import create_access_token, create_refresh_token, decode_token
+from users.models import Category, User
 from users.permissions import IsOwnerOrAdmin, IsAdminOrAuthenticatedReadOnly
 from users.serializers import RegisterUserSerializer, LoginSerializer, ProfileSerializer, CategoryListSerializer
 # Create your views here.
 #ViewSet bilan register qilish
 
-class RegisterAPI(APIView):
-    serializer_class = RegisterUserSerializer
-    permission_classes = [AllowAny]
+# class RegisterAPI(APIView):
+#     serializer_class = RegisterUserSerializer
+#     permission_classes = [AllowAny]
+#     def post(self, request):
+#         serializer = RegisterUserSerializer(data=request.data)
+#         if serializer.is_valid():
+#             user = serializer.save()
+#             access_token =create_access_token(user.id)
+#             refresh_token =create_refresh_token(user.id)
+#             return Response({
+#                 'message': 'success',
+#                 'user_id': user.id,
+#                 'access_token': access_token,
+#                 'refresh_token': refresh_token
+#             }, status=status.HTTP_201_CREATED)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+#
+# class LoginAPI(APIView):
+#     serializer_class = LoginSerializer
+#     permission_classes = [AllowAny]
+#     def post(self, request):
+#         serializer = self.serializer_class(data=request.data)
+#         serializer.is_valid(raise_exception=True)
+#         username = serializer.validated_data.get('username')
+#         password = serializer.validated_data.get('password')
+#         user = authenticate(username=username, password=password)
+#         if user is not None:
+#             access = create_access_token(user.id)
+#             refresh = create_refresh_token(user.id)
+#             return Response({
+#                 "message": "Login muvaffaqiyatli",
+#                 "user_id": user.id,
+#                 "access_token": access,
+#                 "refresh_token": refresh
+#             }, status=status.HTTP_200_OK)
+#         else:
+#             return Response({"error": "Login yoki parol noto'g'ri"}, status=status.HTTP_401_UNAUTHORIZED)
+#
+# class RefreshTokenAPIView(APIView):
+#     def post(self, request):
+#         refresh_token = request.data.get('refresh')
+#         if not refresh_token:
+#             return Response({'Error': 'Refresh token kerak'}, status=400)
+#         try:
+#             payload = decode_token(refresh_token)
+#             if payload['type'] != 'refresh':
+#                 raise jwt.InvalidTokenError
+#         except jwt.ExpiredSignatureError:
+#             return Response({'Error': 'Refresh token eskirgan.'}, status=401)
+#         except jwt.InvalidTokenError:
+#             return Response({'Error': 'Token yaroqsiz.'}, status=401)
+#         new_access = create_access_token(payload['user_id'])
+#         return Response({'access_token': new_access}, status=200)
+
+
+class RegisterAPIView(APIView):
     def post(self, request):
         serializer = RegisterUserSerializer(data=request.data)
-        if serializer.is_valid():
-            user = serializer.save()
-            access_token =create_access_token(user.id)
-            refresh_token =create_refresh_token(user.id)
-            return Response({
-                'message': 'success',
-                'user_id': user.id,
-                'access_token': access_token,
-                'refresh_token': refresh_token
-            }, status=status.HTTP_201_CREATED)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-class LoginAPI(APIView):
-    serializer_class = LoginSerializer
-    permission_classes = [AllowAny]
-    def post(self, request):
-        serializer = self.serializer_class(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        username = serializer.validated_data.get('username')
-        password = serializer.validated_data.get('password')
-        user = authenticate(username=username, password=password)
-        if user is not None:
-            access = create_access_token(user.id)
-            refresh = create_refresh_token(user.id)
-            return Response({
-                "message": "Login muvaffaqiyatli",
-                "user_id": user.id,
-                "access_token": access,
-                "refresh_token": refresh
-            }, status=status.HTTP_200_OK)
-        else:
-            return Response({"error": "Login yoki parol noto'g'ri"}, status=status.HTTP_401_UNAUTHORIZED)
+    def get(self, request):
+        user = User.objects.all()
+        serializer = ProfileSerializer(user, many=True)
+        return Response(serializer.data)
 
-class RefreshTokenAPIView(APIView):
-    def post(self, request):
-        refresh_token = request.data.get('refresh')
-        if not refresh_token:
-            return Response({'Error': 'Refresh token kerak'}, status=400)
-        try:
-            payload = decode_token(refresh_token)
-            if payload['type'] != 'refresh':
-                raise jwt.InvalidTokenError
-        except jwt.ExpiredSignatureError:
-            return Response({'Error': 'Refresh token eskirgan.'}, status=401)
-        except jwt.InvalidTokenError:
-            return Response({'Error': 'Token yaroqsiz.'}, status=401)
-        new_access = create_access_token(payload['user_id'])
-        return Response({'access_token': new_access}, status=200)
 
 class ProfileAPIView(generics.RetrieveUpdateAPIView):
     serializer_class = ProfileSerializer
