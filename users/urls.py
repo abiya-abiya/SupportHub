@@ -1,12 +1,9 @@
 from django.urls import path
 
-from users.views import RegisterAPI, LoginAPI, RefreshTokenAPIView, ProfileAPIView, CategoryListCreateAPIView, \
-    CategoryDetailUpdateDestroyAPIView
+from users.views import ProfileAPIView, CategoryListCreateAPIView, CategoryDetailUpdateDestroyAPIView, RegisterAPIView
 
 urlpatterns = [
-    path('register/', RegisterAPI.as_view()),
-    path('login/', LoginAPI.as_view()),
-    path('token/refresh/', RefreshTokenAPIView.as_view()),
+    path('register/', RegisterAPIView.as_view()),
     path('profile/', ProfileAPIView.as_view()),
 
 
