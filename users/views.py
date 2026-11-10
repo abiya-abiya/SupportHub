@@ -11,7 +11,7 @@ from users import serializers
 # from users.jwt import create_access_token, create_refresh_token, decode_token
 from users.models import Category, User
 from users.permissions import IsOwnerOrAdmin, IsAdminOrAuthenticatedReadOnly
-from users.serializers import RegisterUserSerializer, LoginSerializer, ProfileSerializer, CategoryListSerializer
+from users.serializers import RegisterUserSerializer, ProfileSerializer, CategoryListSerializer
 # Create your views here.
 #ViewSet bilan register qilish
 
@@ -71,6 +71,7 @@ from users.serializers import RegisterUserSerializer, LoginSerializer, ProfileSe
 
 
 class RegisterAPIView(APIView):
+    permission_classes = [AllowAny]
     def post(self, request):
         serializer = RegisterUserSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
@@ -78,10 +79,10 @@ class RegisterAPIView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def get(self, request):
-        user = User.objects.all()
-        serializer = ProfileSerializer(user, many=True)
-        return Response(serializer.data)
+    # def get(self, request):
+    #     user = User.objects.all()
+    #     serializer = ProfileSerializer(user, many=True)
+    #     return Response(serializer.data)
 
 
 class ProfileAPIView(generics.RetrieveUpdateAPIView):
